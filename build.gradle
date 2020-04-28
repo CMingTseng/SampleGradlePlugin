@@ -1,38 +1,91 @@
-plugins {
-    id 'java-gradle-plugin'
-    id 'groovy'
-}
-
-group 'com.project.sdk'
-version '1.0'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-gradlePlugin {
-    plugins {
-        greetingsPlugin {
-            id = 'com.project.sdk.your-plugin-name'
-            implementationClass = 'com.project.sdk.ServicesPlugin'
-        }
-    }
-}
-
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    implementation 'com.google.code.gson:gson:2.8.5'
-}
-
-apply plugin: 'maven'
-
-uploadArchives {
+println 'root build.gradle'
+buildscript {
     repositories {
-        mavenDeployer {
-            repository(url: uri('/Users/shahrukhahmed/Development'))
-        }
+            mavenCentral()
+    }
+    dependencies {
     }
 }
+
+gradle.beforeProject { project ->
+    project.findAll {
+        println 'Show project name  ' + it.toString()
+    }
+}
+
+gradle.afterProject { project ->
+
+}
+
+gradle.addListener(new TaskExecutionListener() {
+    @Override
+    void beforeExecute(Task task) {
+        def taskmodule = task.getProject()
+        println("Show task group  : "+taskmodule)
+        def taskname = task.getName()
+        println("Show task name : "+taskname)
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState state) {
+        if (task.project == project) {
+        }
+    }
+})
+
+gradle.taskGraph.whenReady { taskGraph ->
+    taskGraph.allTasks.findAll {
+
+    }
+
+    tasks.whenTaskAdded { task ->
+        println 'Show '+task.getProject()+'___'+task.name+' tasks.whenTaskAdded'
+        def taskmodule = task.getProject()
+        def taskname = task.getName()
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+    beforeEvaluate {
+
+    }
+    afterEvaluate {
+    }
+}
+
+task myFirstTask {
+    doFirst {
+        println "my first task is execuated"
+    }
+}
+
+task mySecondTask {
+    doFirst {
+        println "my second task is execuated"
+    }
+}
+
+task myTask {
+    doFirst {
+        println "my task is execuated"
+    }
+}
+
+task test() {
+    println 'create a demo test task'
+
+    def a = {
+        println 'Test Demo 2'
+    }
+
+    a()
+    doFirst {
+        println 'not run!!!'
+    }
+}
+
+println 'final run '
